@@ -8,29 +8,29 @@ const port = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
-app.post("/", (req, res) => {
+app.get("/", (req, res) => {
   try {
-    // const data = [
-    //   {
-    //     id: 1,
-    //     name: "John Doe",
-    //     email: "john@example.com",
-    //     age: 30,
-    //   },
-    //   {
-    //     id: 2,
-    //     name: "Jane Smith",
-    //     email: "jane@example.com",
-    //     age: 25,
-    //   },
-    //   {
-    //     id: 3,
-    //     name: "Bob Johnson",
-    //     email: "bob@example.com",
-    //     age: 40,
-    //   },
-    // ];
-    const data = req.body;
+    const data = [
+      {
+        id: 1,
+        name: "John Doe",
+        email: "john@example.com",
+        age: 30,
+      },
+      {
+        id: 2,
+        name: "Jane Smith",
+        email: "jane@example.com",
+        age: 25,
+      },
+      {
+        id: 3,
+        name: "Bob Johnson",
+        email: "bob@example.com",
+        age: 40,
+      },
+    ];
+    // const data = req.body;
     if (!data || !Array.isArray(data) || data.length === 0) {
       return res.status(400).json({ error: "Invalid or empty data provided." });
     }
