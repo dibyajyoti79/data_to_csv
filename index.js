@@ -1,12 +1,14 @@
 const express = require("express");
 const { Parser } = require("@json2csv/plainjs");
+const cors = require("cors");
 
 const app = express();
 const port = process.env.PORT || 3000;
 
+app.use(cors());
 app.use(express.json());
 
-app.post("/export-csv", (req, res) => {
+app.post("/", (req, res) => {
   try {
     // const data = [
     //   {
