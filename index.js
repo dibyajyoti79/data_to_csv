@@ -1,34 +1,48 @@
 const express = require("express");
-const bodyParser = require("body-parser");
-const createCsvWriter = require("csv-writer").createObjectCsvWriter;
+const { Parser } = require("@json2csv/plainjs");
 
 const app = express();
 const port = process.env.PORT || 3000;
 
-app.use(bodyParser.json());
+app.use(express.json());
 
-// Serve static files from the 'public' directory
-// app.use(express.static("public"));
-
-// Define your route for exporting data to CSV
 app.post("/export-csv", (req, res) => {
-  const data = req.body; // Assuming data is sent as JSON in the request body
-  if (!data || !Array.isArray(data) || data.length === 0) {
-    return res.status(400).json({ error: "Invalid or empty data provided." });
-  }
-  const csvWriter = createCsvWriter({
-    path: "exported-data.csv",
-    header: Object.keys(data[0]), // Use the keys from the first object as headers
-  });
+  try {
+    // const data = [
+    //   {
+    //     id: 1,
+    //     name: "John Doe",
+    //     email: "john@example.com",
+    //     age: 30,
+    //   },
+    //   {
+    //     id: 2,
+    //     name: "Jane Smith",
+    //     email: "jane@example.com",
+    //     age: 25,
+    //   },
+    //   {
+    //     id: 3,
+    //     name: "Bob Johnson",
+    //     email: "bob@example.com",
+    //     age: 40,
+    //   },
+    // ];
+    const data = req.body;
+    if (!data || !Array.isArray(data) || data.length === 0) {
+      return res.status(400).json({ error: "Invalid or empty data provided." });
+    }
+    const csvFields = Object.keys(data[0]);
 
-  csvWriter
-    .writeRecords(data)
-    .then(() => {
-      res.download("exported-data.csv"); // Download the generated CSV file
-    })
-    .catch((err) => {
-      res.status(500).json({ error: "Internal Server Error" });
-    });
+    const parser = new Parser({ csvFields });
+    const csv = parser.parse(data);
+
+    res.setHeader("Content-Type", "text/csv");
+    res.setHeader("Content-Disposition", "attachment; exportedData.csv");
+    res.status(200).end(csv);
+  } catch (err) {
+    res.status(400).json({ success: false, msg: err.message });
+  }
 });
 
 app.listen(port, () => {
